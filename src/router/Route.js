@@ -9,20 +9,17 @@ import { useNavigate } from 'react-router-dom';
 import { auth } from "../firebase";
 import useAuth from "../custom-hook/useAuth";
 const Routers = () => {
-    const [islogin, useusLogin] = useState(false);
-    useEffect(() => {
-        const check = async () => {
-            await onAuthStateChanged(auth, (user) => {
-                if (!user) {
-                    useusLogin(false);
-                } else {
-                    useusLogin(true);
-                }
-            });
-        };
-        check()
-    })
-
+    const [islogin, useusLogin] = useState(true);
+    const check = async () => {
+        await onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                useusLogin(false);
+            } else {
+                useusLogin(true);
+            }
+        });
+    };
+    check()
 
 
 
