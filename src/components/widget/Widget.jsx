@@ -1,30 +1,39 @@
 import "./widget.scss";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
-import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
 import ThermostatIcon from "@mui/icons-material/Thermostat";
 import DirectionsWalkIcon from "@mui/icons-material/DirectionsWalk";
 import WarningIcon from "@mui/icons-material/Warning";
 import { useEffect, useState } from "react";
-import { getDatabase, ref, child, get } from "firebase/database";
+import { PulseLoader } from "react-spinners";
 
-const Widget = ({ type, data }) => {
+const Widget = ({ type, data, newdata }) => {
   const [diff, setDiff] = useState(null);
   const dt = data.slice(-1);
-  console.log("====================================");
-  console.log(dt);
-  console.log("====================================");
+  const [loading, setLoading] = useState(true);
   let dulieu;
+
+  useEffect(() => {
+    newdata ? setLoading(false) : setLoading(true);
+  });
+
   switch (type) {
     case "nhietdo":
       dulieu = {
         title: "Nhiệt độ",
-        isMoney: true,
+        isMoney: data[0] ? true : false,
         query: "users",
-        amount: dt[0] ? dt[0].nhietdo : 0,
+        amount: data ? (
+          data[0] ? (
+            data[0].nhietdo
+          ) : data[0] ? (
+            <PulseLoader color="#36d7b7" />
+          ) : (
+            <PulseLoader color="#36d7b7" />
+          )
+        ) : (
+          <PulseLoader color="#36d7b7" />
+        ),
         icon: (
           <ThermostatIcon
             className="icon"
@@ -39,8 +48,18 @@ const Widget = ({ type, data }) => {
     case "doam":
       dulieu = {
         title: "Độ ẩm",
-        isMoney: true,
-        amount: dt[0] ? dt[0].doam : 0,
+        isMoney: data[0] ? true : false,
+        amount: data ? (
+          data[0] ? (
+            data[0].doam
+          ) : data[0] ? (
+            <PulseLoader color="#36d7b7" />
+          ) : (
+            <PulseLoader color="#36d7b7" />
+          )
+        ) : (
+          <PulseLoader color="#36d7b7" />
+        ),
         icon: (
           <ThermostatIcon
             className="icon"
@@ -54,9 +73,19 @@ const Widget = ({ type, data }) => {
       break;
     case "canhbao":
       dulieu = {
-        title: "Cảnh báo",
+        title: "Cảnh báo nhiệt đọ",
         isMoney: false,
-        amount: dt[0] ? dt[0].Flame : 0,
+        amount: newdata ? (
+          newdata.Flame == 0 ? (
+            "Bình thường"
+          ) : newdata.Flame == 0 ? (
+            "Cảnh báo"
+          ) : (
+            <PulseLoader color="#36d7b7" />
+          )
+        ) : (
+          <PulseLoader color="#36d7b7" />
+        ),
         icon: (
           <WarningIcon
             className="icon"
@@ -67,9 +96,19 @@ const Widget = ({ type, data }) => {
       break;
     case "dieukhien":
       dulieu = {
-        title: "Chuyển động",
+        title: "Cảnh báo chuyển động",
         query: "products",
-        amount: dt[0] ? dt[0].chuyendong : 0,
+        amount: newdata ? (
+          newdata.chuyendong === 0 ? (
+            "Bình thường"
+          ) : newdata.chuyendong === 0 ? (
+            "Cảnh báo"
+          ) : (
+            <PulseLoader color="#36d7b7" />
+          )
+        ) : (
+          <PulseLoader color="#36d7b7" />
+        ),
         isMoney: false,
         icon: (
           <DirectionsWalkIcon

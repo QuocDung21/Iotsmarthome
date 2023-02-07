@@ -12,6 +12,7 @@
     }
   }
 
+
   .status {
     padding      : 5px;
     border-radius: 5px;
@@ -26,4 +27,13 @@
       background-color: rgba(189, 189, 3, 0.103);
     }
   }
+}
+
+.fixLoading {
+  display        : flex;
+  justify-content: center;
+  align-items    : center;
+  height         : 160px;
+
+
 }

@@ -6,17 +6,18 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { getDatabase, ref, child, get } from "firebase/database";
 import { useState, useEffect } from "react";
-import { Button, FormControlLabel, FormGroup, Switch } from "@mui/material";
+import { Button } from "@mui/material";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import PuffLoader from "react-spinners/PuffLoader";
+
+
 
 const List = () => {
   const [dieukhien, setDieukhien] = useState([]);
-  const [status, setStatus] = useState(true);
-  const dbRef = ref(getDatabase());
-
-  const [cheked, setChecked] = useState("defaultChecked ");
+  const [loading, setLoading] = useState(false);
 
   const updateOn = async (key, status, name) => {
     await axios
@@ -31,10 +32,11 @@ const List = () => {
         }
       )
       .then((result) => {
-        alert("Update success!");
+        toast({ status });
+        toast("Successfully");
       })
       .catch((err) => {
-        alert(err.message);
+        toast(err.message);
       });
   };
 
@@ -47,7 +49,7 @@ const List = () => {
           )
           .then(async (result) => {
             await setDieukhien(result.data.control);
-            console.log(dieukhien);
+            setLoading(true);
           })
           .catch((err) => {
             console.log(err);
@@ -57,8 +59,8 @@ const List = () => {
     }, 1000);
   }, []);
 
-  return (
-    <TableContainer component={Paper} className="table">
+  return loading ? (
+    <TableContainer component={Paper} className="table container mx-auto">
       <Table sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -86,13 +88,15 @@ const List = () => {
                     </span>
                   </TableCell>
                   <TableCell>
+                    <ToastContainer />
                     <Button
+                      className={data.status === 1 ? "status on" : "status off"}
                       onClick={() => {
                         updateOn(key, data.status, data.name);
                         // alert(key);
                       }}
                     >
-                      {data.status === 1 ? "Tắt" : "Bật"}
+                      {data.status === 1 ? "Bật" : "Tắt"}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -101,6 +105,10 @@ const List = () => {
         </TableBody>
       </Table>
     </TableContainer>
+  ) : (
+    <div className="fixLoading">
+      <PuffLoader className="loading" color="#36d7b7" size={80} />
+    </div>
   );
 };
 

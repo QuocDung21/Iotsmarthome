@@ -2,7 +2,6 @@ import "./featured.scss";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useEffect, useState } from "react";
 import { getDatabase, ref, child, get } from "firebase/database";
 import axios from "axios";
 const Featured = ({ data }) => {

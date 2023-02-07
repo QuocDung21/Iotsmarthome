@@ -3,7 +3,6 @@ import "./login.scss";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -17,15 +16,14 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Copyright } from "@mui/icons-material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const Login = () => {
   const [error, setError] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const navitage = useNavigate();
-
-  const { dispatch } = useContext(AuthContext);
+  const Navigate = useNavigate();
 
   function Copyright(props) {
     return (
@@ -46,29 +44,33 @@ const Login = () => {
   }
   const theme = createTheme();
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        dispatch({ type: "LOGIN", payload: user });
-        navitage("/");
-      })
-      .catch((error) => {
-        setError(true);
-      });
-  };
-
   useEffect(() => {
     console.log("====================================");
     console.log(email, password);
     console.log("====================================");
   });
 
+  const signIn = async (e) => {
+    e.preventDefault();
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      console.log(user);
+      toast("Login successful");
+      Navigate("/");
+    } catch (error) {
+      toast("Login failed");
+      // toast("Error");
+    }
+  };
+
   return (
     <ThemeProvider theme={theme}>
+      <ToastContainer />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -85,12 +87,7 @@ const Login = () => {
           <Typography component="h1" variant="h5">
             Đăng nhập
           </Typography>
-          <Box
-            component="form"
-            onSubmit={handleLogin}
-            noValidate
-            sx={{ mt: 1 }}
-          >
+          <Box component="form" onSubmit={signIn} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"
               required
@@ -119,33 +116,17 @@ const Login = () => {
               }}
               value={password}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+
             <Button
               type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Log In
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );
